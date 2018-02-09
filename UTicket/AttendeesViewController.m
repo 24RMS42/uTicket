@@ -39,6 +39,29 @@
     return NO;
 }
 
+- (void)startScanActionTimer {
+    scanActionTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                                       target:self
+                                                     selector:@selector(forceScanAction)
+                                                     userInfo:nil
+                                                      repeats:NO];
+}
+
+- (void)stopScanActionTimer {
+    [scanActionTimer invalidate];
+    scanActionTimer = nil;
+}
+
+- (void)forceScanAction {
+    [SVProgressHUD dismiss];
+    NSString *failMsg = @"Please move to a better coverage area to have the best experience";
+    [TSMessage showNotificationInViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+                                          title:@"Fail"
+                                       subtitle:failMsg
+                                           type:TSMessageNotificationTypeWarning
+                                       duration:3.0];
+}
+
 - (void)refreshTable {
     _SearchField.text = @"";
     [_SearchButton setHidden:NO];
@@ -114,6 +137,7 @@
 
 - (void)checkinTicket: (NSString*)ticketID{
     
+    [self startScanActionTimer];
     [SVProgressHUD showWithStatus:nil];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
     
@@ -126,6 +150,7 @@
     [manager POST:url parameters:parameters progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
         [SVProgressHUD dismiss];
+        [self performSelectorOnMainThread:@selector(stopScanActionTimer) withObject:nil waitUntilDone:YES];
         int success = [[responseObject valueForKey:@"success"] intValue];
         if (success == 1) {
             //[self getAttendees];
@@ -143,6 +168,7 @@
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         NSLog(@"Error: %@", error);
         [SVProgressHUD dismiss];
+        [self performSelectorOnMainThread:@selector(stopScanActionTimer) withObject:nil waitUntilDone:YES];
         [Functions parseError:error];
     }];
 }

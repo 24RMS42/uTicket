@@ -663,6 +663,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-UTicket/Pods-UTicket-resources.sh",
 				$PODS_CONFIGURATION_BUILD_DIR/FFGlobalAlertController/FFGlobalAlertController.bundle,
+				$PODS_CONFIGURATION_BUILD_DIR/HockeySDK/HockeySDKResources.bundle,
 				$PODS_CONFIGURATION_BUILD_DIR/MBCircularProgressBar/MBCircularProgressBar.bundle,
 				"${PODS_ROOT}/SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle",
 				"${PODS_ROOT}/TSMessages/Pod/Assets/NotificationBackgroundError.png",

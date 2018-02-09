@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+@import HockeySDK;
 
 @interface AppDelegate ()
 
@@ -28,6 +29,10 @@
 //    if ([[userInfo objectForKey:KEY_REMEMBER] isEqualToString:@"yes"]) {
 //        self.window.rootViewController = [self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"sellertab"];
 //    }
+    
+    [[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"7349f5cb8d6848b5951048b59f6d03bb"];
+    [[BITHockeyManager sharedHockeyManager] startManager];
+    [[BITHockeyManager sharedHockeyManager].authenticator authenticateInstallation];
     
     return YES;
 }
@@ -61,18 +66,15 @@
 
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     
-    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     NSString *urlStr = url.absoluteString;
-    // url is supposed like uticket://success=0
-    if (urlStr.length > 18) {
-        NSString *result = [urlStr substringWithRange:NSMakeRange(18, 1)];
-        
-        if ([result isEqualToString:@"1"]) {
-            [userInfo setObject:result forKey:KEY_STRIPE_CON];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STRIPE object:self];
-        }
-        else
-            [userInfo setObject:@"0" forKey:KEY_STRIPE_CON];
+    // url is supposed like uticket://scope=aaaa&code=bbbb (or error=cccc)
+    if ([urlStr rangeOfString:@"code"].location == NSNotFound) {
+        NSArray *items = [urlStr componentsSeparatedByString:@"error="];
+        [Functions showAlert:@"" message:items[1]];
+    } else {
+        NSArray *items = [urlStr componentsSeparatedByString:@"://"];
+        NSDictionary* notificationInfo = @{@"code": items[1]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STRIPE object:self userInfo:notificationInfo];
     }
     
     return YES;

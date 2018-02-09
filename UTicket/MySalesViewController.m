@@ -39,6 +39,7 @@
 - (void)getEvents:(NSNotification *)notification {
 
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SEARCH_EVENT object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTI_SEARCH_PAST_EVENT object:self];
     NSString *url = [NSString stringWithFormat:@"%@%@", BASE_URL, EVENT_DASHBOARD_API];
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];

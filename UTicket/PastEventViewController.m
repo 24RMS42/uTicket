@@ -20,8 +20,8 @@
     UIButton *button = (UIButton *)[self.view viewWithTag:1];
     [Functions configureButton:button];
     
+    offset = 0;
     originArray = [[NSMutableArray alloc]init];
-    [self searchEvents:YES];
     
     refreshControl = [[UIRefreshControl alloc]init];
     [self.tableView addSubview:refreshControl];
@@ -30,6 +30,13 @@
     [_SearchField addTarget:self
                      action:@selector(textFieldDidChanged:)
            forControlEvents:UIControlEventEditingChanged];
+    
+    [self startSearch:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startSearch:)
+                                                 name:NOTI_SEARCH_PAST_EVENT
+                                               object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -53,6 +60,11 @@
     _whileSearch = NO;
     
     [self searchEvents:NO];
+}
+
+- (void)startSearch:(NSNotification *) notification{
+    originArray = [[NSMutableArray alloc]init];
+    [self searchEvents : YES];
 }
 
 - (void)searchEvents : (BOOL)withStatusBar{

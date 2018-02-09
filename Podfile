@@ -17,6 +17,7 @@ pod 'RDVTabBarController'
 pod 'Masonry'
 pod 'MGSwipeTableCell'
 pod "TSMessages"
+pod "HockeySDK"
 
   # Pods for UTicket
 

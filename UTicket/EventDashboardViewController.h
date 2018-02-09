@@ -19,7 +19,7 @@
 
 @interface EventDashboardViewController : UIViewController
 {
-    
+    NSTimer *scanActionTimer;
 }
 @property (nonatomic, assign) bool listLoaded;
 @property (nonatomic,strong) MTBBarcodeScanner *scanner;
@@ -49,6 +49,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *TopScanButton;
 @property (weak, nonatomic) IBOutlet UIButton *ReOKButton;
 @property (weak, nonatomic) IBOutlet UIButton *ReDismissButton;
+@property (weak, nonatomic) IBOutlet UIView *ViewOfInterest;
 
 - (IBAction)OnBackClicked:(id)sender;
 - (IBAction)OnScanClicked:(id)sender;

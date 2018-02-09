@@ -197,6 +197,13 @@
     self.uniqueCodes = [[NSMutableArray alloc] init];
 }
 
+- (void)forceScanAction {
+    [SVProgressHUD dismiss];
+    NSString *failMsg = @"Please move to a better coverage area to have the best experience";
+    _FailMsgLabel.text = failMsg;
+    [self.FailView setHidden:NO];
+}
+
 - (void)startTimer
 {
     [NSTimer scheduledTimerWithTimeInterval:1.0
@@ -206,8 +213,22 @@
                                     repeats:NO];
 }
 
+- (void)startScanActionTimer {
+    scanActionTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                     target:self
+                                   selector:@selector(forceScanAction)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+- (void)stopScanActionTimer {
+    [scanActionTimer invalidate];
+    scanActionTimer = nil;
+}
+
 - (void)actionScan: (NSString*)code{
     
+    [self startScanActionTimer];
     [SVProgressHUD showWithStatus:nil];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
     
@@ -218,6 +239,7 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager POST:url parameters:parameters progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         NSLog(@"qr scan result:%@", responseObject);
+        [self performSelectorOnMainThread:@selector(stopScanActionTimer) withObject:nil waitUntilDone:YES];
         [SVProgressHUD dismiss];
         int success = [[responseObject valueForKey:@"success"] intValue];
         
@@ -242,6 +264,7 @@
         }
         
     } failure:^(NSURLSessionTask *operation, NSError *error) {
+        [self performSelectorOnMainThread:@selector(stopScanActionTimer) withObject:nil waitUntilDone:YES];
         [SVProgressHUD dismiss];
         NSString *failMsg = @"An error occurred. Please try scanning the ticket again";
         _FailMsgLabel.text = failMsg;
@@ -261,6 +284,17 @@
 #pragma mark - Scanning
 
 - (void)startScanning {
+    __weak EventDashboardViewController *weakSelf = self;
+    self.scanner.didStartScanningBlock = ^{
+        //NSLog(@"The scanner started scanning!");
+        // Optionally set a rectangle of interest to scan codes. Only codes within this rect will be scanned.
+        weakSelf.scanner.scanRect = weakSelf.ViewOfInterest.frame;
+    };
+    
+    self.scanner.didTapToFocusBlock = ^(CGPoint point){
+        //NSLog(@"The user tapped the screen to focus. Here we could present a view at %@", NSStringFromCGPoint(point));
+    };
+    
     self.uniqueCodes = [[NSMutableArray alloc] init];
     
     NSError *error = nil;

@@ -70,6 +70,7 @@
 #define NOTIFICATION_SEARCH_EVENT @"SearchEventNotification"
 #define NOTIFICATION_LOGINAS   @"LoginAsNotification"
 #define NOTI_UPDATE_PROFILE    @"UpdateProfile"
+#define NOTI_SEARCH_PAST_EVENT @"SearchPastEvent"
 
 #define kJVFieldFontSize 16.0f
 #define kJVFieldFloatingLabelFontSize 11.0f

@@ -22,6 +22,7 @@
     NSMutableArray *originPendingArray, *originCheckedArray;
     NSArray *sectionTitles;
     UIRefreshControl *refreshControl;
+    NSTimer *scanActionTimer;
 }
 
 @property (nonatomic,strong) NSString *eventID;

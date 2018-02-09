@@ -28,13 +28,13 @@
     [Functions configureButton:button3];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(changeStripeStatus:)
+                                             selector:@selector(completStripeConnect:)
                                                  name:NOTIFICATION_STRIPE
                                                object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
-    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
+    userInfo = [NSUserDefaults standardUserDefaults];
     [_IBANLabel setText:[userInfo objectForKey:KEY_IBAN]];
     [_BICLabel setText:[userInfo objectForKey:KEY_BIC]];
 }
@@ -49,17 +49,16 @@
     return NO;
 }
 
-- (void)changeStripeStatus :(NSNotification *) notification
+- (void)changeStripeStatus
 {
-    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     if ([[userInfo objectForKey:KEY_STRIPE_CON] isEqualToString:@"1"]) {
         [_ConStripeView setHidden:YES];
-        [_DisconnectButton setHidden:NO];
+        [_DisStripeView setHidden:NO];
     }
     else if ([[userInfo objectForKey:KEY_STRIPE_CON] isEqualToString:@"0"])
     {
         [_ConStripeView setHidden:NO];
-        [_DisconnectButton setHidden:YES];
+        [_DisStripeView setHidden:YES];
     }
 }
 
@@ -79,7 +78,6 @@
         
         int success = [[responseObject valueForKey:@"success"] intValue];
         if (success == 1) {
-            NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
             [userInfo setObject:_IBANLabel.text forKey:KEY_IBAN];
             [userInfo setObject:_BICLabel.text  forKey:KEY_BIC];
             
@@ -98,7 +96,6 @@
 
 - (void)tryLogin{
     
-    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     NSDictionary * parameters=@{@"email":[userInfo objectForKey:KEY_EMAIL],
                                 @"password":[userInfo objectForKey:KEY_PASSWORD]
                                 };
@@ -146,6 +143,37 @@
     }];
 }
 
+- (void)completStripeConnect:(NSNotification *) notification {
+    if ([notification.name isEqualToString:NOTIFICATION_STRIPE]) {
+        NSDictionary *notificationInfo = notification.userInfo;
+        NSString *code = notificationInfo[@"code"];
+        
+        [SVProgressHUD showWithStatus:@"Completing..."];
+        [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeGradient];
+        
+        NSString *url = [NSString stringWithFormat:@"%@%@?%@", BASE_URL, STRIPE_COMPLETE_API, code];
+        
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        [manager GET:url parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+            [SVProgressHUD dismiss];
+            int success = [[responseObject valueForKey:@"success"] intValue];
+            
+            if (success == 1) {
+                [userInfo setObject:@"1" forKey:KEY_STRIPE_CON];
+            } else {
+                [userInfo setObject:@"0" forKey:KEY_STRIPE_CON];
+                [Functions checkError:responseObject];
+            }
+            
+            [self changeStripeStatus];
+        } failure:^(NSURLSessionTask *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+            [SVProgressHUD dismiss];
+            [Functions parseError:error];
+        }];
+    }
+}
+
 - (IBAction)OnSelectClicked:(id)sender {
     
     if(_menuDrop == nil) {
@@ -177,13 +205,13 @@
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager GET:url parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
         [SVProgressHUD dismiss];
         int success = [[responseObject valueForKey:@"success"] intValue];
+        
         if (success == 1) {
-            [_ConStripeView setHidden:NO];
-            [_DisconnectButton setHidden:YES];
-        }else
+            [userInfo setObject:@"0" forKey:KEY_STRIPE_CON];
+            [self changeStripeStatus];
+        } else
             [Functions checkError:responseObject];
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -195,27 +223,18 @@
 #pragma mark - NIDropDelegates
 - (void) niDropDownDelegateMethod: (NIDropDown *) sender selectedIndex:(NSInteger)selectedIndex{
     _menuDrop = nil;
-    NSUserDefaults *userInfo = [NSUserDefaults standardUserDefaults];
     
     if (selectedIndex == 0) {
         [_BankView setHidden:NO];
         [_ConStripeView setHidden:YES];
-        [_DisconnectButton setHidden:YES];
+        [_DisStripeView setHidden:YES];
     }
     else
     {
         [_BankView setHidden:YES];
         [_ConStripeView setHidden:NO];
         
-        if ([[userInfo objectForKey:KEY_STRIPE_CON] isEqualToString:@"1"]) {
-            [_ConStripeView setHidden:YES];
-            [_DisconnectButton setHidden:NO];
-        }
-        else if ([[userInfo objectForKey:KEY_STRIPE_CON] isEqualToString:@"0"])
-        {
-            [_ConStripeView setHidden:NO];
-            [_DisconnectButton setHidden:YES];
-        }
+        [self changeStripeStatus];
     }
 }
 

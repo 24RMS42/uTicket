@@ -215,7 +215,7 @@
         <scene sceneID="RaU-9r-bIj">
             <objects>
                 <navigationController navigationBarHidden="YES" id="DCQ-qg-bNL" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="EEj-0i-tXk">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="EEj-0i-tXk">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1261,19 +1261,33 @@
                                     <action selector="OnSelectClicked:" destination="eYl-hJ-MEZ" eventType="touchUpInside" id="fW3-df-ylR"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" tag="3" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qGX-MO-l7X" customClass="SSBouncyButton">
-                                <rect key="frame" x="22" y="209" width="331" height="42"/>
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uIi-63-Ma4">
+                                <rect key="frame" x="22" y="130" width="331" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.96470588239999999" green="0.1647058824" blue="0.4549019608" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <color key="tintColor" red="0.96470588239999999" green="0.1647058824" blue="0.4549019608" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Disconnect Stripe Account">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="OnDisconnectClicked:" destination="eYl-hJ-MEZ" eventType="touchUpInside" id="nsD-ye-GOY"/>
-                                </connections>
-                            </button>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Your account is connected to Stripe" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cMG-n7-De3">
+                                        <rect key="frame" x="0.0" y="12" width="331" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="Roboto-Light" family="Roboto" pointSize="16"/>
+                                        <color key="textColor" red="0.18823529410000001" green="0.18823529410000001" blue="0.18823529410000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qGX-MO-l7X" customClass="SSBouncyButton">
+                                        <rect key="frame" x="0.0" y="79" width="331" height="42"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.96470588239999999" green="0.1647058824" blue="0.4549019608" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <color key="tintColor" red="0.96470588239999999" green="0.1647058824" blue="0.4549019608" alpha="1" colorSpace="calibratedRGB"/>
+                                        <state key="normal" title="Disconnect Stripe Account">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="OnDisconnectClicked:" destination="eYl-hJ-MEZ" eventType="touchUpInside" id="nsD-ye-GOY"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kUn-nT-bpk">
                                 <rect key="frame" x="22" y="130" width="331" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -1358,6 +1372,7 @@
                         <outlet property="BICLabel" destination="gRS-pi-IBp" id="3uV-cY-2Z4"/>
                         <outlet property="BankView" destination="Cqk-S7-27z" id="lle-WH-aZe"/>
                         <outlet property="ConStripeView" destination="kUn-nT-bpk" id="OAa-0A-okk"/>
+                        <outlet property="DisStripeView" destination="uIi-63-Ma4" id="b82-2S-IUi"/>
                         <outlet property="DisconnectButton" destination="qGX-MO-l7X" id="acO-O0-J9b"/>
                         <outlet property="IBANLabel" destination="2Zl-PV-2oh" id="Lce-rM-mfU"/>
                         <outlet property="SelectButton" destination="vJx-nm-LxE" id="5cb-iL-gz3"/>
@@ -2172,6 +2187,7 @@
                         <outlet property="TicketPriceLabel" destination="lZt-J5-Hxe" id="buZ-Yr-5t2"/>
                         <outlet property="TopScanButton" destination="91J-tS-twX" id="gjI-HA-paA"/>
                         <outlet property="TorchButton" destination="pWm-MM-jNF" id="VBB-WN-9Td"/>
+                        <outlet property="ViewOfInterest" destination="gb9-Ph-y4j" id="kJ0-w7-xbb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sbu-f5-OWq" userLabel="First Responder" sceneMemberID="firstResponder"/>

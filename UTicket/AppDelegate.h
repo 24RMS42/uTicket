@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "macro.h"
+#import "Functions.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
